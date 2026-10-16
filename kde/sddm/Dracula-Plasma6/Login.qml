@@ -7,6 +7,7 @@ import QtQuick.Controls 2.4
 
 import org.kde.plasma.plasma5support 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kirigami 2.20 as Kirigami
 
 SessionManagementScreen {
     id: root
@@ -18,8 +19,8 @@ SessionManagementScreen {
     property bool loginScreenUiVisible: false
 
     //the y position that should be ensured visible when the on screen keyboard is visible
-    property int visibleBoundary: mapFromItem(loginButton, 0, 0).y
-    onHeightChanged: visibleBoundary = mapFromItem(loginButton, 0, 0).y + loginButton.height + units.smallSpacing
+    readonly property real visibleBoundary: mapFromItem(loginButton.parent, loginButton.x,
+        loginButton.y + loginButton.height).y + Kirigami.Units.smallSpacing
 
     signal loginRequest(string username, string password)
 

@@ -27,6 +27,8 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 import Qt5Compat.GraphicalEffects
 import org.kde.kirigami 2.20 as Kirigami
 
+import org.kde.plasma.workspace.keyboardlayout as Keyboards
+// Registers the shader resource used by components/UserDelegate.qml.
 import org.kde.breeze.components
 
 import "components"
@@ -112,6 +114,9 @@ Item {
         StackView {
             id: mainStack
             anchors.centerIn: parent
+            anchors.verticalCenterOffset: inputPanel.keyboardHeight > 0 && currentItem
+                ? Math.min(0, (root.height + height) / 2 - currentItem.visibleBoundary - inputPanel.keyboardHeight)
+                : 0
             height: root.height / 2
             width: parent.width / 3
 
@@ -195,19 +200,17 @@ Item {
 
             Behavior on opacity {
                 OpacityAnimator {
-                    duration: units.longDuration
+                    duration: Kirigami.Units.longDuration
                 }
             }
         }
 
-        // IMported from org.kde.breeze.components
-        VirtualKeyboardLoader {
+        KeyboardController {
             id: inputPanel
             z: 1
-            screenRoot: root
-            mainStack: mainStack
-            mainBlock: userListComponent
-            passwordField: userListComponent.mainPasswordBox
+            anchors.fill: parent
+            waylandKeyboard: wayland ? Keyboards.KWinVirtualKeyboard : null
+            passwordField: mainStack.currentItem ? mainStack.currentItem.mainPasswordBox : null
         }
 
         Component {
@@ -271,7 +274,7 @@ Item {
             width: mainStack.width
             height: mainStack.height + footerBg.height
             x: root.width / 2 - width / 2
-            y: root.height / 2 - height / 2 + footerBg.height
+            y: root.height / 2 - height / 2 + footerBg.height + mainStack.anchors.verticalCenterOffset
             radius: 14
             color: "#21232D"
             opacity: 1
@@ -296,26 +299,24 @@ Item {
             anchors {
                 top: parent.top
                 left: parent.left
-                margins: units.smallSpacing
+                margins: Kirigami.Units.smallSpacing
             }
 
             Behavior on opacity {
                 OpacityAnimator {
-                    duration: units.longDuration
+                    duration: Kirigami.Units.longDuration
                 }
             }
 
             PlasmaComponents.ToolButton {
                 text: i18ndc("plasma_lookandfeel_org.kde.lookandfeel", "Button to show/hide virtual keyboard", "Virtual Keyboard")
                 font.pointSize: config.fontSize
+                // A mouse press must not hide the keyboard by stealing focus
+                // before toggle() can read its visibility. Keep Tab navigation.
+                focusPolicy: Qt.TabFocus
                 icon.name: inputPanel.keyboardActive ? "input-keyboard-virtual-on" : "input-keyboard-virtual-off"
-                onClicked: {
-                    // Otherwise the password field loses focus and virtual keyboard
-                    // keystrokes get eaten
-                    userListComponent.mainPasswordBox.forceActiveFocus();
-                    inputPanel.showHide()
-                }
-                visible: inputPanel.status == Loader.Ready
+                onClicked: inputPanel.toggle()
+                visible: inputPanel.available
             }
 
             KeyboardButton {
@@ -339,7 +340,7 @@ Item {
 
             Behavior on opacity {
                 OpacityAnimator {
-                    duration: units.longDuration
+                    duration: Kirigami.Units.longDuration
                 }
             }
 

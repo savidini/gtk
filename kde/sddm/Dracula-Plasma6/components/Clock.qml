@@ -21,6 +21,7 @@ import QtQuick 2.8
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.5
 import org.kde.plasma.plasma5support 2.0 as PlasmaCore
+import org.kde.kirigami 2.20 as Kirigami
 
 RowLayout {
     readonly property bool softwareRendering: GraphicsInfo.api === GraphicsInfo.Software
@@ -30,7 +31,7 @@ RowLayout {
         text: Qt.formatDate(timeSource.data["Local"]["DateTime"], Qt.locale(), Locale.LongFormat)
         color: config.color
         style: softwareRendering ? Text.Outline : Text.Normal
-        styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" //no outline, doesn't matter
+        styleColor: softwareRendering ? Kirigami.Theme.backgroundColor : "transparent" //no outline, doesn't matter
         font.pointSize: 11
         Layout.alignment: Qt.AlignHCenter
         font.family: config.font
@@ -40,7 +41,7 @@ RowLayout {
         text: Qt.formatTime(timeSource.data["Local"]["DateTime"])
         color: config.color
         style: softwareRendering ? Text.Outline : Text.Normal
-        styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" //no outline, doesn't matter
+        styleColor: softwareRendering ? Kirigami.Theme.backgroundColor : "transparent" //no outline, doesn't matter
         font.pointSize: 11
         Layout.alignment: Qt.AlignHCenter
         font.family: config.font
