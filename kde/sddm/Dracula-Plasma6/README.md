@@ -159,10 +159,17 @@ Test environment: Plasma Workspace/KWin **6.8.0**, Qt **6.12.0**, SDDM **0.21.0*
   character in both password forms using an on-screen key.
 - No Plasma Keyboard or Maliit backend was installed. The isolated KWin
   service reported `available = false`; the Wayland keyboard button was hidden.
+- Successful real SDDM authentication was confirmed after a reboot: the user
+  logged in through the patched SDDM login screen using the normal keyboard.
 
-These are preview and component checks, **not successful real authentication**.
-The older-API test uses a mock, **not a full Plasma 6.7 runtime**. Remaining
-manual checks include a real login, Wayland input with an installed keyboard
-backend, and a full older-Plasma runtime. Existing deprecated Connections/data
-engine warnings and private-session portal warnings are distinct from a theme
-load failure.
+Remaining manual checks:
+
+- Wayland virtual-keyboard typing with an input-method backend installed and
+  configured for the greeter's compositor.
+- Full Plasma 6.7 runtime validation. The older-API test uses a mock,
+  **not a full Plasma 6.7 runtime**.
+
+The automated tests and preview probes cover related behavior but do not
+replace these environment-specific manual checks. Existing deprecated
+Connections/data engine warnings and private-session portal warnings are
+distinct from a theme load failure.
